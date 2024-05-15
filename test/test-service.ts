@@ -93,7 +93,7 @@ async function test() {
       );
     },
     discovery: async () => {
-      await conn.publish('services.discovery');
+      await conn.publish('services.discovery.request', JSON.stringify({id: uuidv4()}));
     }
   }
 

@@ -244,10 +244,19 @@ export class SchedulerService implements IEventPublisher {
     this.telemetrySubscription = await this.conn?.subscribe('services.>');
     (async () => {
       for await (const m of this.telemetrySubscription!) {
-        console.log('Telemetry message:', m.subject, m.data);
+        try {
+          const content = m.data.toString();
+          console.log('Telemetry message:', m.subject, content);
+          const contentObject = JSON.parse(content ?? {});
+          if (m.subject === 'services.discovery.request') {
+            await this.conn!.publish('services.discovery.response', JSON.stringify({ requestId: contentObject.id, serviceId: this.config.serviceId, status: 'running' }));
+          }
+        } catch (err) {
+          console.error('Error processing telemetry message:', err);
+        }
+
       }
     })()
-
   }
 
   async start() {
