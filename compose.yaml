@@ -1,0 +1,8 @@
+version: '3'
+services:
+  nats-scheduler:
+    build: .
+    env_file:
+      - .env
+    volumes:
+      - ./tmp:/app/tmp
